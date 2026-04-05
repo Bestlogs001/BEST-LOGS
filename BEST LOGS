@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BEST LOGS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        h1 { font-size: 3em; }
+        p { font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <h1>Hello World! 🌍</h1>
+    <p>Welcome to BESTLOGS your one time social media marketing place and tools, buy with confidence!</p>
+    <p>Entirely for buying legit social media accounts and tools affordably</p>
+</body>
+</html>
+
+
+
+
+
+
+
+{
+  "version": 2,
+  "public": true
+}
