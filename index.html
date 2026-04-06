@@ -1,624 +1,167 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Finance Hub - Virtual Money Simulator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        /* Auth Screens */
-        .auth-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .auth-box {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .auth-box h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 2em;
-        }
-
-        .auth-box p {
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .toggle-auth {
-            margin-top: 20px;
-            color: #667eea;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
-        /* Main App */
-        .app-container {
-            display: none;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Navigation */
-        .navbar {
-            background: white;
-            padding: 15px 30px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .logo {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            padding: 10px 20px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .nav-btn:hover, .nav-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        /* Sections */
-        .section {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Cards */
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .balance-display {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .balance-amount {
-            font-size: 3em;
-            color: #667eea;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-
-        .claim-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 15px 40px;
-            font-size: 1.2em;
-            border-radius: 50px;
-            margin: 20px 0;
-        }
-
-        .claim-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .timer-display {
-            font-size: 1.2em;
-            color: #666;
-            margin-top: 10px;
-        }
-
-        /* Welcome Overlay */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .overlay-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            text-align: center;
-            animation: slideIn 0.5s;
-        }
-
-        @keyframes slideIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .overlay h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-
-        .overlay-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
-
-        /* Transaction List */
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-
-        .transaction-details h4 {
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .transaction-details p {
-            color: #999;
-            font-size: 0.9em;
-        }
-
-        .transaction-amount {
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-
-        .credit { color: #4CAF50; }
-        .debit { color: #f44336; }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196F3;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-
-        .warning-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-
-        .success-message {
-            display: none;
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .congrats-message {
-            display: none;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            animation: fadeIn 0.5s;
-        }
-
-        .congrats-message h2 {
-            color: white;
-            margin-bottom: 10px;
-        }
-
-        .customer-support {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .support-item {
-            padding: 15px;
-            border-bottom: 1px solid #dee2e6;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .support-item:last-child {
-            border-bottom: none;
-        }
-
-        .support-icon {
-            font-size: 1.5em;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyPay Rewards</title>
+<style>
+body {margin:0;font-family:Arial;background:#0b1220;color:#e5e7eb;}
+.header {background:#0f172a;padding:16px;text-align:center;font-size:20px;font-weight:bold;}
+.nav {display:flex;justify-content:space-around;background:#020617;padding:10px;position:fixed;bottom:0;width:100%;}
+.nav button {background:none;border:none;color:#9ca3af;font-size:12px;}
+.section {display:none;padding:20px 16px 80px;}
+.active {display:block;}
+.card {background:#111827;padding:16px;border-radius:14px;margin-bottom:14px;}
+button {padding:10px;border:none;border-radius:10px;background:#22c55e;color:white;}
+input {padding:10px;width:90%;margin:6px;border-radius:8px;border:none;background:#1f2937;color:white;}
+#overlay {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;}
+.box {background:white;color:black;padding:20px;border-radius:12px;text-align:center;}
+.small {font-size:12px;color:#9ca3af;}
+</style>
 </head>
-<body>
-
-    <!-- Login/Signup Screen -->
-    <div class="auth-container" id="authScreen">
-        <div class="auth-box">
-            <h1>💰 Daily Pay</h1>
-            <p>Sign up or login to start earning!</p>
-            
-            <div id="loginForm">
-                <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="Enter email">
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter password">
-                </div>
-                <button class="btn" onclick="login()">Login</button>
-                <p class="toggle-auth" onclick="toggleAuth()">Don't have an account? Sign up</p>
-            </div>
-
-            <div id="signupForm" style="display: none;">
-                <div class="input-group">
-                    <label>Full Name</label>
-                    <input type="text" id="signupName" placeholder="Enter your name">
-                </div>
-                <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" id="signupEmail" placeholder="Enter email">
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" id="signupPassword" placeholder="Create password">
-                </div>
-                <button class="btn" onclick="signup()">Create Account</button>
-                <p class="toggle-auth" onclick="toggleAuth()">Already have an account? Login</p>
-            </div>
-        </div>
+<body><div id="auth" class="section active">
+  <h2 style="text-align:center;">DailyPay Rewards</h2>
+  <div style="text-align:center;">
+    <input id="username" placeholder="Username"><br>
+    <input id="password" type="password" placeholder="Password"><br>
+    <button onclick="signup()">Sign Up</button>
+    <button onclick="login()">Login</button>
+  </div>
+</div><div id="app" style="display:none;">
+  <div class="header">Dashboard</div>  <div id="home" class="section active">
+    <div class="card">
+      <h3>Welcome, <span id="user"></span></h3>
+      <p>Balance: ₦<b id="balance">0</b></p>
+      <button onclick="claim()">Claim Reward</button>
+      <p class="small">Every 2 hours</p>
     </div>
+  </div>  <div id="wallet" class="section">
+    <div class="card">
+      <h3>Wallet</h3>
+      <p>Balance: ₦<b id="walletBal">0</b></p>
+    </div><div class="card">
+  <h3>Withdraw</h3>
+  <input id="bank" placeholder="Bank Name">
+  <input id="acc" placeholder="Account Number">
+  <input id="amount" placeholder="Amount">
+  <button onclick="withdraw()">Withdraw</button>
+</div>
 
-    <!-- Welcome Overlay -->
-    <div class="overlay" id="welcomeOverlay">
-        <div class="overlay-content">
-            <div class="overlay-icon">⚠️</div>
-            <h2>WARNING</h2>
-            <p>MAKE SURE YOU DEPOSIT 10,000 NAIRA TO THIS ACCOUNT DETAILS SO YOU CAN BE ABLE TO WITHDRAWAL YOUR CASH SUCCESSFULLY</p>
-            <p style="font-size: 0.9em; color: #666; margin: 10px 0;">note after transaction is made, it automatically adds to your balance</p>
-            <div style="margin: 20px 0; text-align: left; background: #f5f5f5; padding: 15px; border-radius: 10px;">
-                <p><strong>👇 ACCOUNT NAME:</strong> <span id="displayAccName">-</span></p>
-                <p style="margin-top: 10px;"><strong>👇 ACCOUNT DETAILS:</strong> <span id="displayAccNumber">-</span></p>
-            </div>
-            <button class="btn" onclick="closeOverlay()" style="margin-top: 20px;">I Have Processed</button>
-        </div>
+  </div>  <div id="historySec" class="section">
+    <div class="card">
+      <h3>Transactions</h3>
+      <ul id="history"></ul>
     </div>
-
-    <!-- Main App -->
-    <div class="app-container" id="mainApp">
-        <div class="navbar">
-            <div class="logo">💰 Daily Pay</div>
-            <div class="nav-links">
-                <button class="nav-btn active" onclick="showSection('home')">Home</button>
-                <button class="nav-btn" onclick="showSection('wallet')">Wallet</button>
-                <button class="nav-btn" onclick="showSection('customer')">Customer</button>
-                <button class="nav-btn" onclick="showSection('history')">History</button>
-                <button class="nav-btn" onclick="logout()">Logout</button>
-            </div>
-        </div>
-
-        <!-- Congratulations Message -->
-        <div class="congrats-message" id="congratsMsg">
-            <h2>🎉 Congratulations!</h2>
-            <p>Your account has been successfully activated. You can now start earning!</p>
-        </div>
-
-        <!-- Home Section -->
-        <div class="section active" id="homeSection">
-            <div class="card balance-display">
-                <h2>Your Balance</h2>
-                <div class="balance-amount">₦<span id="balance">0</span></div>
-                <button class="btn claim-btn" id="claimBtn" onclick="claimDailyReward()">
-                    🎁 Claim Daily Reward (+₦5,000)
-                </button>
-                <div class="timer-display" id="timerDisplay"></div>
-            </div>
-
-            <div class="card">
-                <h3>📊 Account Status</h3>
-                <div style="margin-top: 15px;">
-                    <p><strong>Minimum Withdrawal:</strong> ₦15,000</p>
-                    <p style="margin-top: 10px;"><strong>Next Reward:</strong> Available now!</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Wallet Section -->
-        <div class="section" id="walletSection">
-            <div class="card">
-                <h2>💳 Withdrawal Settings</h2>
-                <div class="warning-box">
-                    <strong>Note:</strong> Minimum withdrawal amount is ₦15,000. Make sure your balance reaches this amount.
-                </div>
-                <div class="form-group">
-                    <label>Bank Name</label>
-                    <select id="bankName">
-                        <option>Select Bank</option>
-                        <option>First Bank</option>
-                        <option>GTBank</option>
-                        <option>Zenith Bank</option>
-                        <option>Access Bank</option>
-                        <option>UBA</option>
-                        <option>Opay</option>
-                        <option>Palmpay</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Account Number</label>
-                    <input type="text" id="accountNumber" placeholder="Enter 10 digit number">
-                </div>
-                <div class="form-group">
-                    <label>Account Name</label>
-                    <input type="text" id="accountName" placeholder="Enter account name">
-                </div>
-                <button class="btn" onclick="saveWallet()">Link Account</button>
-                <div class="success-message" id="walletSuccess">Account linked successfully!</div>
-            </div>
-
-            <div class="card">
-                <h3>🏦 Linked Account</h3>
-                <div id="savedAccount">
-                    <p style="color: #999;">No account linked yet. Add your details above to withdraw.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Customer Section -->
-        <div class="section" id="customerSection">
-            <div class="card">
-                <h2>📞 Customer Support</h2>
-                <p style="margin-bottom: 20px;">Need help? Contact us through any of these channels:</p>
-                
-                <div class="customer-support">
-                    <div class="support-item">
-                        <span class="support-icon">📧</span>
-                        <div>
-                            <h4>Email Support</h4>
-                            <p>support@dailypay.com</p>
-                        </div>
-                    </div>
-                    <div class="support-item">
-                        <span class="support-icon">📱</span>
-                        <div>
-                            <h4>WhatsApp</h4>
-                            <p>+234 801 234 5678</p>
-                        </div>
-                    </div>
-                    <div class="support-item">
-                        <span class="support-icon">💬</span>
-                        <div>
-                            <h4>Live Chat</h4>
-                            <p>Available 9AM - 5PM (Mon-Fri)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="info-box" style="margin-top: 20px;">
-                    <strong>Response Time:</strong> We typically respond within 24 hours during business days.
-                </div>
-            </div>
-        </div>
-
-        <!-- History Section -->
-        <div class="section" id="historySection">
-            <div class="card">
-                <h2>📋 Transaction History</h2>
-                <div id="transactionList">
-                    <p style="text-align: center; color: #999; padding: 40px;">No transactions yet. Claim your first reward!</p>
-                </div>
-            </div>
-        </div>
+  </div>  <div id="adminSec" class="section">
+    <div class="card">
+      <h3>Admin Panel</h3>
+      <input id="adminUser" placeholder="Username">
+      <input id="adminAmount" placeholder="Amount">
+      <button onclick="addBalance()">Add Balance</button>
+      <button onclick="clearHistory()">Clear History</button>
     </div>
+  </div>  <div class="nav">
+    <button onclick="show('home')">Home</button>
+    <button onclick="show('wallet')">Wallet</button>
+    <button onclick="show('historySec')">History</button>
+    <button onclick="show('adminSec')">Admin</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+</div><div id="overlay">
+  <div class="box">
+    <h3>Activate</h3>
+    <button onclick="activate()">Continue</button>
+  </div>
+</div><script>
+let currentUser;
 
-    <script>
-        // Data Storage
-        let currentUser = null;
-        let users = JSON.parse(localStorage.getItem('dailyPayUsers')) || {};
-        
-        // Admin account details (shown in overlay)
-        const adminAccount = {
-            name: "Daily Pay Ltd",
-            number: "0123456789"
-        };
+function signup(){
+  let u=username.value,p=password.value;
+  localStorage.setItem(u,JSON.stringify({password:p,balance:0,history:[],active:false}));
+  alert("Created");
+}
 
-        // Auth Functions
-        function toggleAuth() {
-            document.getElementById('loginForm').style.display = 
-                document.getElementById('loginForm').style.display === 'none' ? 'block' : 'none';
-            document.getElementById('signupForm').style.display = 
-                document.getElementById('signupForm').style.display === 'none' ? 'block' : 'none';
-        }
+function login(){
+  let u=username.value,p=password.value;
+  let d=JSON.parse(localStorage.getItem(u));
+  if(d && d.password===p){
+    currentUser=u;
+    auth.style.display="none";
+    app.style.display="block";
+    user.innerText=u;
+    if(!d.active) overlay.style.display="flex";
+    update();
+  }
+}
 
-        function signup() {
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
+function activate(){
+  let d=JSON.parse(localStorage.getItem(currentUser));
+  d.active=true;
+  localStorage.setItem(currentUser,JSON.stringify(d));
+  overlay.style.display="none";
+}
 
-            if (!name || !email || !password) {
-                alert('Please fill all fields');
-                return;
-            }
+function claim(){
+  let d=JSON.parse(localStorage.getItem(currentUser));
+  let now=Date.now();
+  if(d.lastClaim && now-d.lastClaim<7200000){alert("Wait");return;}
+  d.balance+=5000;
+  d.lastClaim=now;
+  d.history.unshift("+₦5000 reward");
+  localStorage.setItem(currentUser,JSON.stringify(d));
+  update();
+}
 
-            if (users[email]) {
-                alert('Email already registered');
-                return;
-            }
+function withdraw(){
+  let d=JSON.parse(localStorage.getItem(currentUser));
+  let amt=parseInt(amount.value);
+  if(amt<15000){alert("Min 15k");return;}
+  if(amt>d.balance){alert("No balance");return;}
+  d.balance-=amt;
+  d.history.unshift("-₦"+amt+" pending");
+  localStorage.setItem(currentUser,JSON.stringify(d));
+  update();
 
-            users[email] = {
-                name: name,
-                email: email,
-                password: password,
-                balance: 0,
-                transactions: [],
-                lastClaim: null,
-                wallet: null,
-                hasSeenOverlay: false
-            };
+  setTimeout(()=>{
+    let d2=JSON.parse(localStorage.getItem(currentUser));
+    d2.history[0] = "-₦"+amt+" completed";
+    localStorage.setItem(currentUser,JSON.stringify(d2));
+    update();
+  },5000);
+}
 
-            localStorage.setItem('dailyPayUsers', JSON.stringify(users));
-            alert('Account created! Please login.');
-            toggleAuth();
-        }
+function addBalance(){
+  let u=adminUser.value;
+  let amt=parseInt(adminAmount.value);
+  let d=JSON.parse(localStorage.getItem(u));
+  if(!d){alert("User not found");return;}
+  d.balance+=amt;
+  d.history.unshift("+₦"+amt+" admin");
+  localStorage.setItem(u,JSON.stringify(d));
+  alert("Added");
+}
 
-        function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
+function clearHistory(){
+  let d=JSON.parse(localStorage.getItem(currentUser));
+  d.history=[];
+  localStorage.setItem(currentUser,JSON.stringify(d));
+  update();
+}
 
-            if (!users[email] || users[email].password !== password) {
-                alert('Invalid credentials');
-                return;
-            }
+function update(){
+  let d=JSON.parse(localStorage.getItem(currentUser));
+  balance.innerText=d.balance;
+  walletBal.innerText=d.balance;
+  history.innerHTML="";
+  d.history.forEach(i=>{
+    let li=document.createElement("li");li.innerText=i;history.appendChild(li);
+  });
+}
 
-            currentUser = users[email];
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            
-            // Show overlay if user hasn't seen it
-            if (!currentUser.hasSeenOverlay) {
-                document.getElementById('displayAccName').textContent = adminAccount.name;
-                document.getElementById('displayAccNumber').textContent = adminAccount.number;
-                document.getElementById('welcomeOverlay').style.display = 'flex';
-            } else {
-                document.getElementById('congratsMsg').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('congratsMsg').style.display = 'none';
-                }, 3000);
-            }
-            
-            updateUI();
-        }
+function show(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-        function logout() {
-            currentUser = null;
-            document.getElementById('authScreen').style.display = 'flex';
-            document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('loginEmail').value = '';
-            document.getElementByI
+function logout(){location.reload();}
+</script></body>
+</html>
